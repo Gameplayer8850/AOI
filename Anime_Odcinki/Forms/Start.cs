@@ -26,17 +26,16 @@ namespace Anime_Odcinki.Loading
             tableLayoutPanel1.Visible = false;
         }
         private void Operations() {
+            settingsToolStripMenuItem.Enabled = false;
             Set_Text("Sprawdzanie dostepności strony MyAnimeList.net");
             if (!wb.MAL_Available()) {
                 Set_Text("Nie udało się połączyć z stroną MyAnimeList.net");
-                settingsToolStripMenuItem.Enabled = false;
                 return;
             }
             Set_Text("Sprawdzanie dostepności strony animezone.pl");
             if (!wb.AnimeZone_Available())
             {
                 Set_Text("Nie udało się połączyć z stroną animezone.pl");
-                settingsToolStripMenuItem.Enabled = false;
                 return;
             }
             settingsToolStripMenuItem.Enabled = true;
@@ -54,6 +53,7 @@ namespace Anime_Odcinki.Loading
             
         }
         private void Add_MAL() {
+            settingsToolStripMenuItem.Enabled = false;
             Set_Text("");
             label2.Visible = true;
             textBox1.Visible = true;
@@ -154,6 +154,7 @@ namespace Anime_Odcinki.Loading
             {
                 Data.Data.nick_MAL = textBox1.Text;
                 Show_List();
+                settingsToolStripMenuItem.Enabled = true;
             }
             else Set_Text("Nie istnieje podane konto w serwisie MAL");
         }
@@ -186,6 +187,19 @@ namespace Anime_Odcinki.Loading
                 Refresh_list();
             }
             als.Dispose();
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13) {
+                if (wb.MAL_Acc_Exist(textBox1.Text))
+                {
+                    Data.Data.nick_MAL = textBox1.Text;
+                    Show_List();
+                    settingsToolStripMenuItem.Enabled = true;
+                }
+                else Set_Text("Nie istnieje podane konto w serwisie MAL");
+            }
         }
     }
 }

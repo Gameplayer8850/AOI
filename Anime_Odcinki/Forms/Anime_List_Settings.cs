@@ -75,5 +75,30 @@ namespace Anime_Odcinki.Loading
             int row = e.RowIndex;
             comboBox1.SelectedIndex = row;
         }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13) {
+                textBox1.Text = am.Add_https(textBox1.Text);
+                if (textBox1.Text.Equals("") || am.Is_It_Link_to_Anime(textBox1.Text))
+                {
+                    int current_column = dataGridView1.CurrentCell.ColumnIndex;
+                    int curren_row = comboBox1.SelectedIndex;
+                    Data.Data.Anime a1 = new Data.Data.Anime();
+                    a1 = Data.Data.list[comboBox1.SelectedIndex];
+                    a1.link_to_anime = textBox1.Text;
+                    Data.Data.list[comboBox1.SelectedIndex] = a1;
+                    this.updated = true;
+                    Load_list();
+                    label1.Text = "Pomyślnie dodano podany link!";
+                    dataGridView1.CurrentCell = dataGridView1.Rows[curren_row].Cells[current_column];
+                    comboBox1.SelectedIndex = curren_row;
+                }
+                else
+                {
+                    label1.Text = "Nie udało się dodać podanego linku!";
+                }
+            }
+        }
     }
 }
