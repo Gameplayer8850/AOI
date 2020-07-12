@@ -43,6 +43,10 @@ namespace Anime_Odcinki.Loading
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (comboBox1.SelectedIndex == -1) {
+                textBox1.Text = "";
+                return;
+            }
             textBox1.Text = Data.Data.list[comboBox1.SelectedIndex].link_to_anime;
             int current_column = dataGridView1.CurrentCell!=null? dataGridView1.CurrentCell.ColumnIndex:0;
             dataGridView1.CurrentCell = dataGridView1.Rows[comboBox1.SelectedIndex].Cells[current_column];
@@ -50,6 +54,10 @@ namespace Anime_Odcinki.Loading
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (comboBox1.SelectedIndex == -1) {
+                label1.Text = "Proszę wybrać anime!";
+                return;
+            }
             textBox1.Text = am.Add_https(textBox1.Text);
             if (textBox1.Text.Equals("") || am.Is_It_Link_to_Anime(textBox1.Text))
             {
