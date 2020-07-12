@@ -13,24 +13,28 @@ namespace Anime_Odcinki.Loading
 {
     public partial class Anime_List_Settings : Form
     {
-        public Boolean updated;
+        public Boolean updated, is_sorted;
         File_and_Data_Manager.Anime_manager am;
+        List<Data.Data.Anime> sorted = new List<Data.Data.Anime>();
         public Anime_List_Settings()
         {
             InitializeComponent();
             Load_list();
             am = new File_and_Data_Manager.Anime_manager();
             this.updated = false;
+            this.is_sorted = false;
         }
         private void Load_list() {
+            if (is_sorted) sorted = Data.Data.list.OrderByDescending(o=>o.title).ToList();
+            else sorted = Data.Data.list;
             var source = new BindingSource();
-            source.DataSource = Data.Data.list.Select(o=>new { image=Get_Image(o.image_url), o.title, o.link_to_anime});
+            source.DataSource = sorted.Select(o=>new { image=Get_Image(o.image_url), o.title, o.link_to_anime});
             dataGridView1.DataSource = source;
             dataGridView1.Columns[0].HeaderCell.Value = "Okładka";
             dataGridView1.Columns[1].HeaderCell.Value = "Tytuł";
             dataGridView1.Columns[2].HeaderCell.Value = "Link do anime";
             var source2 = new BindingSource();
-            source2.DataSource= Data.Data.list.Select(o => new { o.title });
+            source2.DataSource= sorted.Select(o => new { o.title });
             comboBox1.DataSource = source2;
             comboBox1.DisplayMember = "title";
         }
@@ -47,7 +51,7 @@ namespace Anime_Odcinki.Loading
                 textBox1.Text = "";
                 return;
             }
-            textBox1.Text = Data.Data.list[comboBox1.SelectedIndex].link_to_anime;
+            textBox1.Text = sorted[comboBox1.SelectedIndex].link_to_anime;
             int current_column = dataGridView1.CurrentCell!=null? dataGridView1.CurrentCell.ColumnIndex:0;
             dataGridView1.CurrentCell = dataGridView1.Rows[comboBox1.SelectedIndex].Cells[current_column];
         }
@@ -64,9 +68,9 @@ namespace Anime_Odcinki.Loading
                 int current_column = dataGridView1.CurrentCell.ColumnIndex;
                 int curren_row = comboBox1.SelectedIndex;
                 Data.Data.Anime a1 = new Data.Data.Anime();
-                a1 = Data.Data.list[comboBox1.SelectedIndex];
+                a1 = sorted[comboBox1.SelectedIndex];
                 a1.link_to_anime = textBox1.Text;
-                Data.Data.list[comboBox1.SelectedIndex] = a1;
+                Data.Data.list[Data.Data.list.IndexOf(sorted[comboBox1.SelectedIndex])] = a1;
                 this.updated = true;
                 Load_list();
                 label1.Text = "Pomyślnie dodano podany link!";
@@ -93,9 +97,9 @@ namespace Anime_Odcinki.Loading
                     int current_column = dataGridView1.CurrentCell.ColumnIndex;
                     int curren_row = comboBox1.SelectedIndex;
                     Data.Data.Anime a1 = new Data.Data.Anime();
-                    a1 = Data.Data.list[comboBox1.SelectedIndex];
+                    a1 = sorted[comboBox1.SelectedIndex];
                     a1.link_to_anime = textBox1.Text;
-                    Data.Data.list[comboBox1.SelectedIndex] = a1;
+                    Data.Data.list[Data.Data.list.IndexOf(sorted[comboBox1.SelectedIndex])] = a1;
                     this.updated = true;
                     Load_list();
                     label1.Text = "Pomyślnie dodano podany link!";
@@ -107,6 +111,33 @@ namespace Anime_Odcinki.Loading
                     label1.Text = "Nie udało się dodać podanego linku!";
                 }
             }
+        }
+
+        private void dataGridView1_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == 1)
+            {
+                if (!is_sorted) sorted = Data.Data.list.OrderByDescending(o => o.title).ToList();
+                else sorted = Data.Data.list.OrderBy(o => o.title).ToList();
+                is_sorted = !is_sorted;
+            }
+            else if (e.ColumnIndex == 2)
+            {
+                if (!is_sorted) sorted = Data.Data.list.OrderByDescending(o => o.link_to_anime).ToList();
+                else sorted = Data.Data.list.OrderBy(o => o.link_to_anime).ToList();
+                is_sorted = !is_sorted;
+            }
+            else return;
+            var source = new BindingSource();
+            source.DataSource = sorted.Select(o => new { image = Get_Image(o.image_url), o.title, o.link_to_anime });
+            dataGridView1.DataSource = source;
+            dataGridView1.Columns[0].HeaderCell.Value = "Okładka";
+            dataGridView1.Columns[1].HeaderCell.Value = "Tytuł";
+            dataGridView1.Columns[2].HeaderCell.Value = "Link do anime";
+            var source2 = new BindingSource();
+            source2.DataSource = sorted.Select(o => new { o.title });
+            comboBox1.DataSource = source2;
+            comboBox1.DisplayMember = "title";
         }
     }
 }
