@@ -71,11 +71,17 @@ namespace Anime_Odcinki.Web
         }
         public byte[] Get_Image_in_Byte(String link)
         {
-            using (WebClient client = new WebClient())
+            try
             {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                byte[] imageData = client.DownloadData(link);
-                return imageData;
+                using (WebClient client = new WebClient())
+                {
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    byte[] imageData = client.DownloadData(link);
+                    return imageData;
+                }
+            }
+            catch {
+                return null;
             }
         }
     }

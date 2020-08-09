@@ -101,9 +101,16 @@ namespace Anime_Odcinki.Loading
             }
             int row = 1;
             foreach (Data.Data.Anime a1 in Data.Data.new_episodes) {
-                MemoryStream stream = new MemoryStream(wb.Get_Image_in_Byte(a1.image_url));
-                Image img = Image.FromStream(stream);
-                tableLayoutPanel1.Controls.Add(new PictureBox { Image = img, Height = 70, Width = 50, Anchor = AnchorStyles.Top, SizeMode = PictureBoxSizeMode.StretchImage }, 0, row);
+                byte[] imageData =wb.Get_Image_in_Byte(a1.image_url);
+                if (imageData != null)
+                {
+                    MemoryStream stream = new MemoryStream(imageData);
+                    Image img = Image.FromStream(stream);
+                    tableLayoutPanel1.Controls.Add(new PictureBox { Image = img, Height = 70, Width = 50, Anchor = AnchorStyles.Top, SizeMode = PictureBoxSizeMode.StretchImage }, 0, row);
+                }
+                else {
+                    tableLayoutPanel1.Controls.Add(new Label { Text = "Brak okładki", AutoSize = true, ForeColor = Color.Orange, Font = new Font(Font.FontFamily, 14), Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter }, 0, row);
+                }
                 tableLayoutPanel1.Controls.Add(new Label { Text = a1.title, AutoSize = true, ForeColor = Color.Yellow, Font = new Font(Font.FontFamily, 14), Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter }, 1, row);
                 tableLayoutPanel1.Controls.Add(new Label { Text = (a1.num_watched + 1).ToString(), AutoSize = false, ForeColor = Color.Yellow, Font = new Font(Font.FontFamily, 14), Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter }, 2, row);
                 LinkLabel l1 = new LinkLabel { Text = "Link do odcinka", AutoSize = true, ForeColor = Color.Yellow, Font = new Font(Font.FontFamily, 14), Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
